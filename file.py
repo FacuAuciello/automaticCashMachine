@@ -1,69 +1,125 @@
 #AUTOMATIC CASH MACHINE
 
-#MENU
-def main_menu():
-    print("WELCOME TO THE AUTOMATIC CASH MACHINE TESLA 2.0\n1)Create account\n2)Enter account\n3)Exit")
-    user_option = int(input("Select an option: "))
-    return user_option
-#CREATE ACCOUNT
-def create_account():
-    pass
-
-def full_name():
-    pass
-def ID():
-    pass
-def pin_password():
-    pass
-#una vez que llega aca vuelve al menu para ingresar a su cuenta
-#ENTER ACCOUNT
-def enter_account():
-    pass
-#se podria utilizar la misma funcion para entrar a la cuenta, con la funcion dni y password?
-def account_menu():
-    pass
-def see_balance():
-    pass
-def deposit():
-    pass
-def withdraw(): #retirar
-    pass
-def exit ():
-    pass #tambien podria utilizar la de exit del programa?
-#EXIT
-def exit():
-    pass
-
-continuar = True
-while continuar:
-    main_menu()
-    #if user_option == 1:
-
-class bankAccount:
-    def __init__(self, name, lastName, ID, pinPassword):
+#CLASS Y FUNCTIONS
+class BankAccount:
+    def __init__(self, name, lastName, ID, pinPassword, balance=0):
         self.name = name
         self.lastName = lastName
         self.ID = ID
         self.pinPassword = pinPassword
-    
-    def name(self):
-        user_name = input("Enter your name: ")
-        return user_name
-    
-    def lastName(self):
-        user_last_name = input("Enter your last name: ")
-        return user_last_name
+        self.balance = balance
 
-    def ID(self):
-        user_ID = int(input("Enter your ID: "))
-        if user_ID == len(8):
-            return ID
+    def see_balance(self):
+        print(f"Your balance is: ${self.balance}")
+
+    def deposit(self):
+        user_deposit = input("Enter the amount to deposit: ")
+        if user_deposit.isdigit():
+            user_deposit = int(user_deposit)
+            self.balance += user_deposit
+            print(f"Deposit successful. Your new balance is: ${self.balance}")
         else:
-            print("Enter only eigth numbers")
-    
-    def pinPassword():
-        user_pin_password = int(input("Enter your pin password(four numbers): "))
-        if user_pin_password == len(4):
-            return user_pin_password
+            print("Invalid input. Deposit must be a number.")
+
+    def withdraw(self):
+        user_withdraw = input("Enter the amount to withdraw: ")
+        if user_withdraw.isdigit():
+            user_withdraw = int(user_withdraw)
+            if user_withdraw <= self.balance:
+                self.balance -= user_withdraw
+                print(f"You withdrew ${user_withdraw}. Your new balance is: ${self.balance}")
+            else:
+                print("Insufficient funds")
         else:
-            print("Enter only four numbers")
+            print("Invalid input. Withdrawal must be a number")
+
+
+def main_menu():
+    print("#### WELCOME TO THE AUTOMATIC CASH MACHINE TESLA 2.0 ####\n1)Create account\n2)Enter account\n3)Exit")
+    user_option_main_menu = input("----------Select an option----------:")
+    if user_option_main_menu.isdigit() and len(str(user_option_main_menu)) == 1:
+        user_option_main_menu = int(user_option_main_menu)
+    else:
+        print("INVALID. Enter a correct option ")
+        user_option_main_menu = 0
+    return user_option_main_menu
+
+
+def create_account():
+    user_name = input("Enter your name: ")
+    user_last_name = input("Enter your last name: ")
+    user_ID = int(input("Enter your ID. Only eight numbers: "))
+    user_pin_password = int(input("Enter your pin password(four numbers): "))
+    new_account = BankAccount(user_name, user_last_name, user_ID, user_pin_password)
+    accounts.append(new_account)
+    print("----Account created successfully----\n----Now you can log in to your account----")
+
+
+def enter_account(accounts):
+    while True:
+        user_ID = input("Enter your ID. Only eight numbers: ")
+        if user_ID.isdigit() and len(str(user_ID)) == 8:
+            user_ID = int(user_ID)
+            break
+        else:
+            print("INVALID. Please enter your eight numbers ID correctly ")
+
+    while True:
+        user_pin_password = input("Enter your pin password(four numbers): ")
+        if user_pin_password.isdigit() and len(str(user_pin_password)) == 4:
+            user_pin_password = int(user_pin_password)
+            break
+        else:
+            print("INVALID. Please enter your pin password correctly ")
+
+    for account in accounts:
+        if account.ID == user_ID and account.pinPassword == user_pin_password:
+            return account
+
+    print("Incorrect ID or PIN. Please try again.")
+    return None
+
+
+def account_menu():
+    print("----What do you want to do?----\n1)See balance\n2)Deposit\n3)Withdraw\n4)Return to menu")
+    user_option_account_menu = input("Select an option: ")
+    if user_option_account_menu.isdigit() and len(str(user_option_account_menu)) == 1:
+        user_option_account_menu = int(user_option_account_menu)
+    else:
+        print("INVALID. Enter a correct option ")
+        user_option_account_menu = 0
+    return user_option_account_menu
+
+
+def exit_program():
+    print("Bye")
+
+#LOGIC
+accounts = []
+
+while True:
+    option_user = main_menu()
+    if option_user == 1:
+        create_account()
+    elif option_user == 2:
+        while True:
+            logged_account = enter_account(accounts)
+            if logged_account is not None:
+                while True:
+                    option_menu_account = account_menu()
+                    if option_menu_account == 1:
+                        logged_account.see_balance()
+                    elif option_menu_account == 2:
+                        logged_account.deposit()
+                    elif option_menu_account == 3:
+                        logged_account.withdraw()
+                    elif option_menu_account == 4:
+                        break
+                    else:
+                        print("Invalid option")
+                break
+    elif option_user == 3:
+        exit_program()
+        break
+    else:
+        print("Invalid. Enter a valid option")
